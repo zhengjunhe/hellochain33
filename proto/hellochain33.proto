@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package types;
+
+message Hellochain33Action {
+    oneof value {
+        SetSelfIntroAction SetSelfIntro = 1;
+        PingPongAction PingPong         = 2;
+
+    }
+    int32 ty = 3;
+}
+
+message SetSelfIntroAction {
+    string introduction = 1;
+    int32 age = 2;
+    bool male = 3;
+    bool married = 4;
+    string notes = 5;
+}
+
+message logSetSelfIntro {
+    string addr = 1;
+    SetSelfIntroAction previous = 2;
+    SetSelfIntroAction current  = 3;
+}
+
+message PingPongAction {
+    string account = 1;
+    string notes = 2;
+}
+
+message logPingPong {
+    string addr = 1;
+    PingPongStatus previous = 2;
+    PingPongStatus current  = 3;
+}
+
+message SelfIntroInfo {
+    string introduction = 1;
+    int32 age = 2;
+    bool male = 3;
+    bool married = 4;
+}
+//true:ping; false: pong
+message PingPongStatus {
+    bool status = 1;
+}
+
+message ReqPingPongStatus {
+    bool status = 2;
+}
+
+message PingPongCount {
+    int32 count = 1;
+}
+
+message ReqAccount {
+    string account = 1;
+}
+
+message ReqAccountSpecified {
+    oneof value {
+        int32 greaterThan = 1;
+        int32 notgreaterThan = 2;
+        bool male = 3;
+        bool married = 4;
+
+    }
+    int32 ty = 5;
+}
+
+message ResAccountsSelfIntro {
+    repeated string accouts = 1;
+}
+
+service hellochain33 {
+    //获取指定账户的个人介绍信息
+    rpc GetSelfIntro(ReqAccount) returns (SelfIntroInfo) {}
+    //获取指定账户的ping，pong状态
+    rpc GetPingPongStatus(ReqAccount) returns (PingPongStatus) {}
+    //获取所有满足条件的用户
+    rpc GetAccountsSelfIntroSetted(ReqAccountSpecified) returns (ResAccountsSelfIntro) {}
+    //获取处在ping或pong的状态下的用户数
+    rpc GetPingOrPongs(ReqPingPongStatus) returns (PingPongCount) {}
+}
